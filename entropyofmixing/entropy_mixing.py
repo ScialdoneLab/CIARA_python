@@ -3,14 +3,6 @@ from scipy.stats import fisher_exact, entropy
 import multiprocessing
 from functools import partial
 
-def get_background_full(norm_adata, threshold, n_cells, n_cells_high):
-
-    thr_per_gene = np.sum(norm_adata.X > threshold, axis=0)
-    genes_filter = np.logical_and(thr_per_gene >= n_cells, thr_per_gene <= n_cells_high)
-    print("Background genes: " + str(np.sum(genes_filter)))
-
-    return genes_filter.tolist()
-
 def perform_sub_entropy(nn_gene_expression, binary_expression, p_value, odds_ratio=2):
 
     entropy_nn, p_value_nn = 1, 1 
