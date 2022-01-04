@@ -6,8 +6,6 @@ The package can be installed via pip:
 
 `python -m pip install identom_python`
 
-https://pypi.org/project/identom-python/0.9.4/
-
 ## Tutorial
 
 The package contains the two main functions `get_full_background()` and `entropy_mixing()` which should be imported via:
