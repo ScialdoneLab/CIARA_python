@@ -1,6 +1,6 @@
-# IDENTOM (Identification of rare cell types using ENTropy Of Mixing)
+# IDENTOM <br /> (Identification of rare cell types using ENTropy Of Mixing)
 
-Implementation of the entropy of mixing algorithm in python.
+Python implementation of the entropy of mixing algorithm that integrates into scanpy's analysis with the AnnData format.
 
 The package can be installed via pip:
 
