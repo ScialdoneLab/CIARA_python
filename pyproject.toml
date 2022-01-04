@@ -4,28 +4,3 @@ requires = [
   "wheel"
 ]
 build-backend = "setuptools.build_meta"
-
-[project]
-name = "entropyofmixing"
-version = "0.9"
-description = "Entropy of Mixing algorithm for rare cell type identification in python."
-requires-python = ">=3.7"
-license = {file = "LICENSE"}
-authors = [
-    {name = "Marco Stock"},
-    {name = "Gabriele Lubatti"},
-    {name = "Antonio Scialdone"},
-]
-maintainers = [
-    {name = "Marco Stock", email = "marco.stock@tum.de"},
-]
-readme = {file = "README.md", content-type="text/markdown"}
-dependencies = [
-    "numpy>=1.17.0",
-    "scipy>=1.4",
-    "multiprocessing",
-    "functools",
-]
-
-[project.urls]
-Source = "https://github.com/ScialdoneLab/entropymixing_python"
