@@ -1,6 +1,6 @@
-# Entropy of mixing in python
+# IDENTOM (Identification of rare cell types using ENTropy Of Mixing)
 
-Implementation of entropy of mixing algorithm in python.
+Implementation of the entropy of mixing algorithm in python.
 
 The package can be installed via pip:
 
