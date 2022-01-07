@@ -18,4 +18,4 @@ The functions are designed to work with scanpy's AnnData objects. For an example
 
 Link to R package: 
 
-https://github.com/ScialdoneLab/EntropyMixingRnew
+https://github.com/ScialdoneLab/IDENTOM/
