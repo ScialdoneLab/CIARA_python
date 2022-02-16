@@ -1,6 +1,6 @@
 # CIARA <br /> (Cluster Independent Algorithm for the identification of RAre cell types)
 
-Python implementation of the entropy of mixing algorithm that integrates into scanpy's analysis with the AnnData format.
+Python implementation of the CIARA algorithm that integrates into scanpy's analysis with the AnnData format.
 
 The package can be installed via pip:
 

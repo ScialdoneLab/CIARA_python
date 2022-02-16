@@ -17,16 +17,19 @@ def perform_fisher(nn_gene_expression, binary_expression, p_value, odds_ratio=2)
 
     return p_value_nn
 
-def ciara_gene(gene_expression, knn_matrix, p_value, odds_ratio, local_region, approximation):
+def ciara_gene(gene_idx, p_value, odds_ratio, local_region, approximation):
 
+    gene_expression = gene_expressions_g[gene_idx]
     binary_expression = gene_expression > np.median(gene_expression)
 
     if approximation:
-        knn_matrix = knn_matrix[binary_expression,:]
+        knn_matrix_internal = knn_matrix_g[binary_expression,:]
+    else:
+        knn_matrix_internal = knn_matrix_g
 
     p_values_nn = np.array([])
-    for cell in range(knn_matrix.shape[0]):
-        nn_cell = knn_matrix[cell, :]
+    for cell in range(knn_matrix_internal.shape[0]):
+        nn_cell = knn_matrix_internal[cell, :]
         nn_gene_expression = binary_expression[nn_cell==1]
         p_value_sub = perform_fisher(nn_gene_expression, binary_expression , p_value, odds_ratio)
         p_values_nn = np.append(p_values_nn, p_value_sub)
@@ -38,27 +41,32 @@ def ciara_gene(gene_expression, knn_matrix, p_value, odds_ratio, local_region, a
 
     return p_value_gene
 
-def ciara(norm_adata, knn_matrix, n_cores, p_value, odds_ratio, local_region, approximation):
-
-    assert((knn_matrix.index.values == knn_matrix.columns.values).all)
-    assert((norm_adata.obs_names == knn_matrix.index.values).all)
-    #knn_matrix is pandas dataframe in same orientation as Anndata.X (cellsxgenes)
-    #knn_matrix and Anndata.X should contain the cells in same order
+def ciara(norm_adata, n_cores, p_value, odds_ratio, local_region, approximation):
 
     background = norm_adata.X[:, norm_adata.var["CIARA_background"]]
-    gene_expressions = [background[:,i].flatten() for i in range(np.shape(background)[1])]
-    knn_matrix = knn_matrix.to_numpy()
+    global gene_expressions_g
+    gene_expressions_g = [background[:,i].flatten() for i in range(np.shape(background)[1])]
+    global knn_matrix_g
+    knn_matrix_g = norm_adata.obsp["connectivities"].toarray()
 
     pool = multiprocessing.Pool(n_cores)
-    temp = partial(ciara_gene, knn_matrix=knn_matrix, p_value=p_value, odds_ratio=odds_ratio, local_region=local_region, approximation=approximation)
-    results = pool.map(func=temp, iterable=gene_expressions, chunksize=50)
+    chunksize, extra = divmod(len(gene_expressions_g), 4 * n_cores)
+    if extra:
+        chunksize += 1
+    print("\n## Running on " + str(n_cores) + " cores with a chunksize of " + str(chunksize))
+    temp = partial(ciara_gene, p_value=p_value, odds_ratio=odds_ratio, local_region=local_region, approximation=approximation)
+    results = pool.map(func=temp, iterable=range(len(gene_expressions_g)), chunksize=chunksize)
     pool.close()
     pool.join()
+
 
     p_values_output = [np.NAN for i in range(len(norm_adata.var_names))]
     for index, gene_pos in enumerate(np.where(norm_adata.var["CIARA_background"])[0]):
         p_values_output[gene_pos] = results[index]
 
+    norm_adata.var.drop(columns="CIARA_p_value", inplace=True, errors='ignore')
+    norm_adata.var.insert(0, "CIARA_p_value", p_values_output)
+
     print('\n---- Finished sucessfully! ----')
 
-    return p_values_output
+    return
