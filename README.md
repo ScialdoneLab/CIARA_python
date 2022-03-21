@@ -32,7 +32,7 @@ Afterwards, the background genes get marked by running the `get_full_background(
 
 Finally, the `ciara()` function is run on the dataset. This adds the column 'CIARA_p_value' to your `pbmc.var` object, where the calculated p_values for each of the previously marked background genes are stored.
 
-`ciara(human_gast_norm, n_cores=4, p_value=0.001, odds_ratio=2, approximation=True, local_region=1)`
+`ciara(pbmc, n_cores=4, p_value=0.001, odds_ratio=2, approximation=True, local_region=1)`
 
 The functions are designed to work with scanpy's AnnData objects. For an interactive tutorial check out the Human Gastrula IPython Notebook which is also part of this repository.
 
