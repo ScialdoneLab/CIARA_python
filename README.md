@@ -6,6 +6,8 @@ The package can be installed via pip:
 
 `python -m pip install ciara_python`
 
+Note: The package only works on UNIX / MacOS operating systems, not on Windows systems, due to the copy-on-write multiprocessing setup used.
+
 ## Tutorial
 
 First you load your dataset as a scanpy object and after normal preprocessing calculate the knn-network:
@@ -38,6 +40,6 @@ The functions are designed to work with scanpy's AnnData objects. For an interac
 
 ## R package
 
-Link to R package: 
+Link to R package:
 
 https://github.com/ScialdoneLab/CIARA/

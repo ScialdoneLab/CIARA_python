@@ -23,13 +23,13 @@ def ciara_gene(gene_idx, p_value, odds_ratio, local_region, approximation):
     binary_expression = gene_expression > np.median(gene_expression)
 
     if approximation:
-        knn_matrix_internal = knn_matrix_g[binary_expression,:]
+        knn_subset = np.nditer(np.where(binary_expression))
     else:
-        knn_matrix_internal = knn_matrix_g
+        knn_subset = range(knn_matrix_g.shape[0])
 
     p_values_nn = np.array([])
-    for cell in range(knn_matrix_internal.shape[0]):
-        nn_cell = knn_matrix_internal[cell, :]
+    for cell in knn_subset:
+        nn_cell = knn_matrix_g[cell, :]
         nn_gene_expression = binary_expression[nn_cell==1]
         p_value_sub = perform_fisher(nn_gene_expression, binary_expression , p_value, odds_ratio)
         p_values_nn = np.append(p_values_nn, p_value_sub)
@@ -42,6 +42,8 @@ def ciara_gene(gene_idx, p_value, odds_ratio, local_region, approximation):
     return p_value_gene
 
 def ciara(norm_adata, n_cores, p_value, odds_ratio, local_region, approximation):
+
+    multiprocessing.set_start_method("fork", force=True)
 
     background = norm_adata.X[:, norm_adata.var["CIARA_background"]]
     global gene_expressions_g
