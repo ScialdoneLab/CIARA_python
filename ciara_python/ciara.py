@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.stats import fisher_exact
+import scipy.sparse as sp
 import multiprocessing
 from functools import partial
 
@@ -46,6 +47,8 @@ def ciara(norm_adata, n_cores, p_value, odds_ratio, local_region, approximation)
     multiprocessing.set_start_method("fork", force=True)
 
     background = norm_adata.X[:, norm_adata.var["CIARA_background"]]
+    if sp.issparse(background):
+        background = background.toarray()
     global gene_expressions_g
     gene_expressions_g = [background[:,i].flatten() for i in range(np.shape(background)[1])]
     global knn_matrix_g

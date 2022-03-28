@@ -35,7 +35,7 @@ from ciara_python import get_ background_full, ciara
 Afterwards, the background genes get marked by running the `get_full_background()` function on your scanpy dataset. This adds the boolean column 'CIARA_background' to your `pbmc.var` AnnData slot, where relevant background genes are marked.
 
 ```python
-get_background_full(pbmc, threshold=1, n_cells=3, n_cells_high=20)
+get_background_full(pbmc, threshold=1, n_cells=2, n_cells_high=5)
 ```
 
 Finally, the `ciara()` function is run on the dataset. This adds the column 'CIARA_p_value' to your `pbmc.var` object, where the calculated p_values for each of the previously marked background genes are stored.
@@ -51,7 +51,7 @@ from matplotlib.pyplot import rc_context
 
 sc.tl.umap(pbmc)
 
-top_markers = human_gast_norm.var.nsmallest(4, ["CIARA_p_value"],)
+top_markers = pbmc.var.nsmallest(4, ["CIARA_p_value"],)
 
 with rc_context({'figure.figsize': (3, 3)}):
     sc.pl.umap(pbmc, color=top_markers.index.tolist())
