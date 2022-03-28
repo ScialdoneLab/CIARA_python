@@ -57,6 +57,8 @@ with rc_context({'figure.figsize': (3, 3)}):
     sc.pl.umap(pbmc, color=top_markers.index.tolist())
 ```
 
+![UMAP of top 4 rare cell type markers for PBMCs](/figures/umap_CIARA_PBMCs.svg)
+
 ## R package
 
 Link to R package:
