@@ -3,22 +3,20 @@ from scipy.stats import fisher_exact
 import scipy.sparse as sp
 import multiprocessing
 from functools import partial
+import warnings
 
-def perform_fisher(nn_gene_expression, binary_expression, p_value, odds_ratio=2):
-
-    p_value_nn = 1
+def perform_fisher(nn_gene_expression, binary_expression):
 
     if np.sum(nn_gene_expression) != 0:
         input_fisher = np.array([[np.sum(nn_gene_expression), np.sum(binary_expression)-np.sum(nn_gene_expression)],
                                 [np.sum(~nn_gene_expression), np.sum(~binary_expression)-np.sum(~nn_gene_expression)]])
-        oddsr_test, p_test = fisher_exact(input_fisher, alternative = 'greater')
-        if p_test < p_value and oddsr_test > odds_ratio:
-            p_0 = np.sum(nn_gene_expression) / len(nn_gene_expression)
-            p_value_nn = p_test
+        _, p_value_nn = fisher_exact(input_fisher, alternative = 'greater')
+    else:
+        p_value_nn = 1
 
     return p_value_nn
 
-def ciara_gene(gene_idx, p_value, odds_ratio, local_region, approximation):
+def ciara_gene(gene_idx, p_value, local_region, approximation):
 
     gene_expression = gene_expressions_g[gene_idx]
     binary_expression = gene_expression > np.median(gene_expression)
@@ -32,17 +30,18 @@ def ciara_gene(gene_idx, p_value, odds_ratio, local_region, approximation):
     for cell in knn_subset:
         nn_cell = knn_matrix_g[cell, :]
         nn_gene_expression = binary_expression[nn_cell==1]
-        p_value_sub = perform_fisher(nn_gene_expression, binary_expression , p_value, odds_ratio)
-        p_values_nn = np.append(p_values_nn, p_value_sub)
+        p_value_nn = perform_fisher(nn_gene_expression, binary_expression)
+        p_values_nn = np.append(p_values_nn, p_value_nn)
 
     if np.sum(p_values_nn<p_value) >= local_region:
         p_value_gene = np.min(p_values_nn)
     else:
         p_value_gene = 1
+        #warnings.warn(f'The gene is not enriched in {local_region} or more local regions')
 
     return p_value_gene
 
-def ciara(norm_adata, n_cores, p_value, odds_ratio, local_region, approximation):
+def ciara(norm_adata, n_cores, p_value, local_region, approximation):
 
     multiprocessing.set_start_method("fork", force=True)
 
@@ -59,11 +58,10 @@ def ciara(norm_adata, n_cores, p_value, odds_ratio, local_region, approximation)
     if extra:
         chunksize += 1
     print("\n## Running on " + str(n_cores) + " cores with a chunksize of " + str(chunksize))
-    temp = partial(ciara_gene, p_value=p_value, odds_ratio=odds_ratio, local_region=local_region, approximation=approximation)
+    temp = partial(ciara_gene, p_value=p_value, local_region=local_region, approximation=approximation)
     results = pool.map(func=temp, iterable=range(len(gene_expressions_g)), chunksize=chunksize)
     pool.close()
     pool.join()
-
 
     p_values_output = [np.NAN for i in range(len(norm_adata.var_names))]
     for index, gene_pos in enumerate(np.where(norm_adata.var["CIARA_background"])[0]):
