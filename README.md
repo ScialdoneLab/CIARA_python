@@ -1,4 +1,4 @@
-# CIARA <br /> (Cluster Independent Algorithm for the identification of RAre cell types)
+# CIARA <br /> (Cluster Independent Algorithm for the identification of RAre cell type markers)
 
 Python implementation of the CIARA algorithm that integrates into scanpy's analysis with the AnnData format.
 
