@@ -26,13 +26,13 @@ sc.pp.pca(pbmc)
 sc.pp.neighbors(pbmc)
 ```
 
-The CIARA package contains the two main functions `get_full_background()` and `ciara()` which should be imported via:
+The CIARA package contains the two main functions `get_background_full()` and `ciara()` which should be imported via:
 
 ```python
-from ciara_python import get_ background_full, ciara
+from ciara_python import get_background_full, ciara
 ```
 
-Afterwards, the background genes get marked by running the `get_full_background()` function on your scanpy dataset. This adds the boolean column 'CIARA_background' to your `pbmc.var` AnnData slot, where relevant background genes are marked.
+Afterwards, the background genes get marked by running the `get_background_full()` function on your scanpy dataset. This adds the boolean column 'CIARA_background' to your `pbmc.var` AnnData slot, where relevant background genes are marked.
 
 ```python
 get_background_full(pbmc, threshold=1, n_cells_low=2, n_cells_high=5)
